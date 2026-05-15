@@ -27,3 +27,7 @@ jobs:
 
       - name: Show model metrics
         run: cat model/metrics.json
+
+      # Build the Docker image after the model has been retrained successfully
+      - name: Build Docker image
+        run: docker build -t coaching-block-api .
