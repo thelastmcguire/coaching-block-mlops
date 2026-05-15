@@ -2,6 +2,7 @@ import os
 import json
 import joblib
 import pandas as pd
+from datetime import datetime
 
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import train_test_split
@@ -54,7 +55,10 @@ def train_model():
 
     joblib.dump(model, MODEL_PATH)
 
-    metrics = {"accuracy": accuracy}
+    metrics = {
+        "accuracy": accuracy,
+        "this model was trained_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    }
 
     with open(METRICS_PATH, "w") as file:
         json.dump(metrics, file, indent=4)
