@@ -55,9 +55,10 @@ def train_model():
 
     joblib.dump(model, MODEL_PATH)
 
+    # GitHub Actions runners use UTC time, so the timestamp is labelled as UTC for clarity
     metrics = {
         "accuracy": accuracy,
-        "this model was trained_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        "this model was trained at UTC": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     }
 
     with open(METRICS_PATH, "w") as file:
