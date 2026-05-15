@@ -29,9 +29,10 @@ jobs:
         run: cat model/metrics.json
 
       # Build the Docker image after the model has been retrained successfully:
-      # Login to Docker Hub using GitHub repository secrets
+      # Updated to v3 because docker/login-action@v1 showed a deprecation warning.
+      # GitHub Actions warning stated actions will use Node.js 24 by default from 02/06/2026.
       - name: Login to Docker Hub
-        uses: docker/login-action@v1
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
