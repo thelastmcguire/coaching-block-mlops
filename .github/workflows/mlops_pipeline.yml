@@ -65,5 +65,11 @@ jobs:
             -p 5000:5000 \
             thelastmcguire/coaching-block-api:latest
 
+      - name: Wait for Flask API to start
+        run: sleep 10
+
+      - name: Check running containers
+        run: docker ps
+
       - name: Test deployed API health endpoint
         run: curl http://127.0.0.1:5000/health
