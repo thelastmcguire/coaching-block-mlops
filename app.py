@@ -18,12 +18,14 @@ comp_in_5_weeks_map = {
     "Y": 1
 }
 
+#standard page welcome
 @app.route("/")
 def home():
     return jsonify({
-        "message": "Coaching Block Recommendation API is running"
+        "message": "Coaching Block Recommendation API is running. Please enter your details to predict your next block."
     })
 
+##health check used by the deployment workflow
 @app.route("/health")
 def health():
     return jsonify({
@@ -31,23 +33,40 @@ def health():
         "model_loaded": True
     })
 
-@app.route("/predict", methods=["POST"])
+#model prediction
+@app.route("/predict")
 def predict():
-    data = request.get_json()
+    experience = int(request.args.get("Experience"))
+    fatigue = int(request.args.get("Fatigue"))
+    strength_trend = request.args.get("StrengthTrend")
+    weeks_in_block = int(request.args.get("WeeksInBlock"))
+    comp_in_5_weeks = request.args.get("CompIn5Weeks")
+    stress = int(request.args.get("Stress"))
 
     input_data = pd.DataFrame([{
-        "Experience": data["Experience"],
-        "Fatigue": data["Fatigue"],
-        "StrengthTrend": strength_trend_map[data["StrengthTrend"]],
-        "WeeksInBlock": data["WeeksInBlock"],
-        "CompIn5Weeks": comp_in_5_weeks_map[data["CompIn5Weeks"]],
-        "Stress": data["Stress"]
+        "Experience": experience,
+        "Fatigue": fatigue,
+        "StrengthTrend": strength_trend_map[strength_trend],
+        "WeeksInBlock": weeks_in_block,
+        "CompIn5Weeks": comp_in_5_weeks_map[comp_in_5_weeks],
+        "Stress": stress
     }])
 
-    prediction = model.predict(input_data)
+    prediction = model.predict(input_data)[0]
+
+    message = f"Based on the input data, your recommended next coaching block is {prediction}. Best of luck with your training."
 
     return jsonify({
-        "recommended_block": prediction[0]
+        "recommended_block": prediction,
+        "message": message,
+        "input_received": {
+            "Experience": experience,
+            "Fatigue": fatigue,
+            "StrengthTrend": strength_trend,
+            "WeeksInBlock": weeks_in_block,
+            "CompIn5Weeks": comp_in_5_weeks,
+            "Stress": stress
+        }
     })
 
 if __name__ == "__main__":
