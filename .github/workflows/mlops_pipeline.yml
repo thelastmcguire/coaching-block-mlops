@@ -44,3 +44,26 @@ jobs:
       # Push Docker image to Docker Hub
       - name: Push Docker image to Docker Hub
         run: docker push thelastmcguire/coaching-block-api:latest
+        
+  deploy-to-vm:
+    runs-on: self-hosted
+    needs: train-model
+
+    steps:
+      - name: Pull latest Docker image
+        run: docker pull thelastmcguire/coaching-block-api:latest
+
+      - name: Stop old container if running
+        run: |
+          docker stop coaching-block-api || true
+          docker rm coaching-block-api || true
+
+      - name: Run latest container
+        run: |
+          docker run -d \
+            --name coaching-block-api \
+            -p 5000:5000 \
+            thelastmcguire/coaching-block-api:latest
+
+      - name: Test deployed API health endpoint
+        run: curl http://127.0.0.1:5000/health
